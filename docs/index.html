@@ -57,6 +57,10 @@
                 font-size: 3.5rem;
             }
         }
+        
+        .underline {
+            text-decoration: underline;
+        }
     </style>
     <!-- Custom styles for this template -->
     <link href="css/floating-labels.css" rel="stylesheet">
@@ -68,6 +72,7 @@
             <img class="mb-4" src="apple-touch-icon.png" alt="" width="72" height="72">
             <h1 class="h3 mb-3 font-weight-normal">Get Today Tweet</h1>
             <p>Get your today tweets from previous year, just type your twitter's <code>username</code> and choose a <code>year</code> and you will get your tweets (if any).</p>
+            <p>Or you can use with url format like this: <code>https://yufieko.github.io/todaytweet/?username=<span class="underline">yourusername</span>&year=<span class="underline">2019</span></code></p>
         </div>
 
         <div class="form-group">
@@ -150,18 +155,22 @@
             return decodeURIComponent(results[2].replace(/\+/g, ' '));
         }
 
-        var usernameQuery = getParameterByName('username');
-        var yearQuery = getParameterByName('year');
+        document.addEventListener('DOMContentLoaded', function() {
+            var usernameQuery = getParameterByName('username');
+            var yearQuery = getParameterByName('year');
 
-        if (usernameQuery !== null) {
-            if (yearQuery === null) {
-                yearQuery = 'all';
+            if (usernameQuery !== null) {
+                if (yearQuery === null) {
+                    yearQuery = 'all';
+                    yearElem.value = yearQuery;
+                }
+
+                usernameElem.value = usernameQuery;
+                var link = getLink(usernameQuery, yearQuery);
+
+                parent.open(link);
             }
-
-            var link = getLink(usernameQuery, yearQuery);
-
-            parent.open(link);
-        }
+        });
     </script>
 </body>
 
