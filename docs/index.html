@@ -105,9 +105,16 @@
         yearElem.appendChild(frag);
 
         document.getElementById('form').addEventListener('submit', function(e) {
-            var q = 'from:' + usernameElem.value + ' ';
+            e.preventDefault();
+            var link = getLink(usernameElem.value, yearElem.value);
 
-            if (yearElem.value === 'all') {
+            parent.open(link);
+        });
+
+        function getLink(username, yearElem) {
+            var q = 'from:' + username + ' ';
+
+            if (yearElem === 'all') {
                 var i = -1
                 var fromDate = moment().add(i, 'years');
                 var toDate = moment().add(i, 'years').add(1, 'days');
@@ -122,13 +129,39 @@
 
                 q += '(until:' + toDate.format('YYYY-MM-DD') + ' since:' + fromDate.format('YYYY-MM-DD') + ')';
             } else {
-                var fromDate = moment().format(yearElem.value + '-MM-DD');
-                var toDate = moment().add(1, 'days').format(yearElem.value + '-MM-DD');
+                var fromDate = moment().format(yearElem + '-MM-DD');
+                var toDate = moment().add(1, 'days').format(yearElem + '-MM-DD');
                 q += '(until:' + toDate + ' since:' + fromDate + ')';
             }
 
-            parent.open('https://twitter.com/search?q=' + q + '&src=typed_query&f=live')
-        });
+            var link = 'https://twitter.com/search?q=' + q + '&src=typed_query&f=live';
+
+            return link;
+        }
+
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        var usernameQuery = getParameterByName('username');
+        var yearQuery = getParameterByName('year');
+
+        if (usernameQuery !== null) {
+            if (yearQuery === null) {
+                yearQuery = 'all';
+            }
+
+            var link = getLink(usernameQuery, yearQuery);
+
+            parent.open(link);
+        }
     </script>
 </body>
 
